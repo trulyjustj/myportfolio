@@ -82,6 +82,24 @@ body {
     color: var(--color-text);
 }
 
+.proj-pdf-container {
+    width: min(1000px, calc(100vw - 40px));
+    margin: 32px 0 20px 50%;
+    transform: translateX(-50%);
+}
+
+.proj-pdf-container iframe {
+    display: block;
+    width: 100%;
+    height: 800px;
+    margin: 0 auto;
+    border: 0;
+}
+
+.proj-pdf-container p {
+    text-align: center;
+}
+
 /* Optional block: a labeled code sample. Delete this block on pages   */
 /* that don't involve code (e.g. a build or design activity).          */
 .proj-code {
