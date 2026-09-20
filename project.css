@@ -134,6 +134,27 @@ pre code, pre code {
     border-radius: var(--radius);
 }
 
+.fofftest-wrap {
+    margin: 20px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.fofftest-image {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 420px;
+    margin: 0 auto;
+    object-fit: contain;
+    background: #f6f6f6;
+    border-radius: 20px;
+}
+
 /* Optional block: an embedded video (e.g. YouTube). The padding-top  */
 /* trick keeps a 16:9 shape at any screen width — do not set a fixed  */
 /* pixel height on the iframe itself.                                  */
