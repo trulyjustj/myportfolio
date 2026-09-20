@@ -113,43 +113,55 @@ body {
 /* ************************************* */
 
 .portfolio {
-    padding-block: 5rem 2rem;
-    max-width: 100%;
-    margin-inline: 1.5rem;
-
+    padding: 5rem 1.5rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
     display: grid;
     gap: 1.5rem;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     justify-items: stretch;
+    box-sizing: border-box;
 }
 
 .project-card {
-    padding: 5px;
-    margin: 5px;
+    margin: 0;
     background-color: var(--color-accent);
     border-radius: var(--radius);
     text-align: center;
+    overflow: hidden;
+    min-height: 100%;
 }
 
 .project-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     color: var(--color-text-muted);
+    text-decoration: none;
+    padding: 1rem;
+    box-sizing: border-box;
 }
 
 .project-title {
+    margin: 0 0 0.5rem;
     font-size: 1.5em;
+    line-height: 1.3;
 }
 
 .project-desc {
+    margin: 0 0 0.75rem;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    line-height: 1.4;
 }
 
 .project-img {
     display: block;
     width: 100%;
+    margin-top: auto;
     aspect-ratio: 4 / 3;
     object-fit: cover;
     border-radius: calc(var(--radius) - 4px);
