@@ -9,25 +9,25 @@
 
 :root {
     /* Brand colors */
-    --color-primary: #4a7a6e;       /* deep teal-green: headers, nav, links */
-    --color-primary-dark: #35594f;  /* darker teal: hover/active states */
-    --color-accent: #e0a66a;        /* warm orange: cards, highlights */
-    --color-accent-dark: #c98a49;   /* darker orange: hover states */
+    --color-primary: #172a4d;       /* deep navy background */
+    --color-primary-dark: #0f1e39;  /* darker navy */
+    --color-accent: #f3f4f7;        /* soft card background */
+    --color-accent-dark: #dfe8f9;   /* muted blue highlight */
 
     /* Text */
-    --color-text: #2d2420;          /* main body text */
-    --color-text-muted: #4d3a2c;    /* secondary text, links on light bg */
-    --color-text-on-dark: #ffffff;  /* text placed over photos/dark overlays */
+    --color-text: #25375c;          /* main body text */
+    --color-text-muted: #495d7b;    /* secondary text */
+    --color-text-on-dark: #f6f2ff;  /* text placed over photos/dark overlays */
 
     /* Backgrounds */
-    --color-bg-page: #f4f4f4;       /* page background on activity/project pages */
-    --color-bg-card: #ffffff;       /* white card/container background */
-    --color-bg-overlay: rgba(74, 122, 110, 0.5); /* translucent header/hero overlay */
+    --color-bg-page: #edf1f6;       /* page background */
+    --color-bg-card: rgba(255, 255, 255, 0.18); /* translucent card */
+    --color-bg-overlay: rgba(15, 29, 56, 0.48); /* dark translucent overlay */
 
     /* Typography */
-    --font-body: Arial, Helvetica, sans-serif;
+    --font-body: "Segoe UI", Arial, Helvetica, sans-serif;
 
     /* Shape */
-    --radius: 10px;
+    --radius: 18px;
     --container-max: 800px;
 }
