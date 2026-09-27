@@ -158,6 +158,25 @@ pre code, pre code {
     object-fit: contain;
 }
 
+.project-gallery-large .gallery-landscape {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: var(--radius);
+}
+
+.project-gallery-large .gallery-landscape img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: auto;
+    max-width: none;
+    height: 133.333%;
+    object-fit: contain;
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
 .fofftest-wrap {
     margin: 20px 0;
     width: 100%;
