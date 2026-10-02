@@ -51,6 +51,95 @@
             <p>I filmed the car from overhead to show its path. A side view would not capture the path as clearly.</p>
         </div>
 
+        <div class="proj-code">
+            <h3>Code:</h3>
+            <pre><code>
+# Setup: left wheel motor on port E, right wheel motor on port F.
+# The motors are mounted in opposite orientations.
+from hub import port, button
+import runloop
+import motor
+
+# Speeds are in degrees per second.
+SLOW_SPEED = 300
+FAST_SPEED = 700
+TURN_SPEED = 400
+
+# Each maneuver lasts 2 seconds, with a short pause between maneuvers.
+DURATION_MS = 2000
+PAUSE_MS = 500
+
+async def main():
+    # Wait for a press of the right hub button before starting.
+    while button.pressed(button.RIGHT) == 0:
+        await runloop.sleep_ms(10)
+
+    # Drive forward slowly.
+    motor.run(port.E, SLOW_SPEED)
+    motor.run(port.F, -SLOW_SPEED)
+    await runloop.sleep_ms(DURATION_MS)
+    motor.stop(port.E)
+    motor.stop(port.F)
+    await runloop.sleep_ms(PAUSE_MS)
+
+    # Drive forward quickly.
+    motor.run(port.E, FAST_SPEED)
+    motor.run(port.F, -FAST_SPEED)
+    await runloop.sleep_ms(DURATION_MS)
+    motor.stop(port.E)
+    motor.stop(port.F)
+    await runloop.sleep_ms(PAUSE_MS)
+
+    # Drive backward slowly.
+    motor.run(port.E, -SLOW_SPEED)
+    motor.run(port.F, SLOW_SPEED)
+    await runloop.sleep_ms(DURATION_MS)
+    motor.stop(port.E)
+    motor.stop(port.F)
+    await runloop.sleep_ms(PAUSE_MS)
+
+    # Drive backward quickly.
+    motor.run(port.E, -FAST_SPEED)
+    motor.run(port.F, FAST_SPEED)
+    await runloop.sleep_ms(DURATION_MS)
+    motor.stop(port.E)
+    motor.stop(port.F)
+    await runloop.sleep_ms(PAUSE_MS)
+
+    # Spin clockwise in place.
+    motor.run(port.E, TURN_SPEED)
+    motor.run(port.F, TURN_SPEED)
+    await runloop.sleep_ms(DURATION_MS)
+    motor.stop(port.E)
+    motor.stop(port.F)
+    await runloop.sleep_ms(PAUSE_MS)
+
+    # Spin counter-clockwise in place.
+    motor.run(port.E, -TURN_SPEED)
+    motor.run(port.F, -TURN_SPEED)
+    await runloop.sleep_ms(DURATION_MS)
+    motor.stop(port.E)
+    motor.stop(port.F)
+    await runloop.sleep_ms(PAUSE_MS)
+
+    # Drive forward in a small-radius arc.
+    motor.run(port.E, FAST_SPEED)
+    motor.run(port.F, -SLOW_SPEED)
+    await runloop.sleep_ms(DURATION_MS)
+    motor.stop(port.E)
+    motor.stop(port.F)
+    await runloop.sleep_ms(PAUSE_MS)
+
+    # Drive forward in a larger-radius arc.
+    motor.run(port.E, FAST_SPEED)
+    motor.run(port.F, -500)
+    await runloop.sleep_ms(DURATION_MS)
+    motor.stop(port.E)
+    motor.stop(port.F)
+
+runloop.run(main())
+</code></pre></div>
+
     </div>
     <!-- End Project Information -->
 

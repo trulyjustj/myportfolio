@@ -126,13 +126,14 @@ body {
     margin: auto;
 }
 
-.proj-code pre:has(code), pre:has(code) {
-    background-color: black;
-    color: white;
-    border-radius: 8px;
-    padding: 4px;
+.proj-code pre {
+    background-color: var(--color-primary);
+    color: var(--color-text-on-dark);
+    border-radius: var(--radius);
+    padding: 16px;
+    overflow-x: auto;
 }
-pre code, pre code {
+.proj-code pre code {
     white-space: pre-wrap;
     word-wrap: break-word;
 }
