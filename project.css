@@ -87,6 +87,10 @@ body {
     box-shadow: 0 12px 26px rgba(16, 28, 48, 0.12);
 }
 
+.simplecar-hero img {
+    width: 85%;
+}
+
 .proj-desc {
     margin: 20px 0;
     line-height: 1.7;
