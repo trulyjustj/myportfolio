@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Activity 4: Programming with Sensors</title>
+    <link rel="stylesheet" href="./project.css">
+</head>
+<body>
+
+    <!-- Header and Navigation Section -->
+    <header class="header">
+        <a class="name">J CRUZ</a>
+        <nav class="navbar">
+            <a href="./index.html" class="active">Home</a>
+        </nav>
+    </header>
+
+    <!-- Project Information -->
+    <div class="proj-container">
+
+        <h1 class='proj-header'>Project Portfolio</h1>
+
+        <h2 class='proj-header'>Activity 4: Programming with Sensors</h2>
+
+        <div class="proj-desc">
+            <p>In this activity, I read input from a color sensor and used it to control a motor. The sensor modes included Color, RGB, and Reflective.</p>
+            <p>The code below continuously reads and prints the sensor's red, green, blue, and intensity values to the SPIKE App Console. In the green-sensing activity, the LED on the brain turned on when green was detected. We also saw it flick on at times when no green was detected.</p>
+        </div>
+
+        <div class="proj-code">
+            <h3>Python code for sensing Green</h3>
+            <pre><code># Setup: Color Sensor on port E.
+
+from hub import port
+import runloop
+import color_sensor
+
+async def main():
+    # Keep printing the sensor readings.
+    while True:
+        # Read the red, green, blue, and intensity values.
+        red_value, green_value, blue_value, intensity = color_sensor.rgbi(port.E)
+
+        # Cap each value at 255 for display.
+        red_display = min(red_value, 255)
+        green_display = min(green_value, 255)
+        blue_display = min(blue_value, 255)
+        intensity_display = min(intensity, 255)
+
+        # Print the capped readings in the SPIKE App Console.
+        print("Red:", red_display, "Green:", green_display,
+              "Blue:", blue_display, "Intensity:", intensity_display)
+
+        # Pause so the readings are easier to observe.
+        await runloop.sleep_ms(500)
+
+runloop.run(main())
+</code></pre>
+        </div>
+
+    </div>
+    <!-- End Project Information -->
+
+</body>
+</html>
