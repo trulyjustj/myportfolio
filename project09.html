@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Project 8: Astronaut Tools</title>
+    <link rel="stylesheet" href="./project.css">
+</head>
+<body>
+
+    <!-- Header and Navigation Section -->
+    <header class="header">
+        <a class="name">J CRUZ</a>
+        <nav class="navbar">
+            <a href="./index.html" class="active">Home</a>
+        </nav>
+    </header>
+
+    <!-- Project Information -->
+    <div class="proj-container">
+
+        <h1 class='proj-header'>Project Portfolio</h1>
+
+        <h2 class='proj-header'>Project 8: Astronaut Tools</h2>
+
+        <div class="proj-img-container">
+            <p>Project photo will be added here.</p>
+        </div>
+
+        <div class="proj-desc">
+            <p>The mission is to design a one-handed LEGO Education SPIKE Prime tool that helps an astronaut move nuts from one bolt to another during a spacewalk. The tool must unscrew a nut, keep hold of it while it is off the bolt, and screw it onto a second bolt.</p>
+            <p>The design must account for the limits of working outside a spacecraft: astronauts wear bulky, stiff gloves, have limited dexterity, and need to keep one hand on the spacecraft. The tool must stay in the user's hand or be tethered, work in either hand, and make the task reasonably quick.</p>
+        </div>
+
+        <div class="proj-desc">
+            <h3>Testing and Evaluation</h3>
+            <p>Testing uses a board with two bolts and two nuts. Wearing ski gloves as a stand-in for space-suit gloves, the user works with one hand. A successful run moves both nuts from one bolt to the other without dropping either nut; dropping a nut ends the run.</p>
+            <p>The tool is evaluated for use with the right hand, the left hand, and with the board upright, upside down, and on its side. In the speed challenge, students race head-to-head; the fastest successful run advances, while a dropped nut loses the round.</p>
+        </div>
+
+        <div class="proj-desc">
+            <h3>Design Journey</h3>
+            <p>Space for sketches and photos of early prototypes, with notes about what did not work and what changed.</p>
+        </div>
+
+        <div class="proj-gallery">
+            <p>Prototype and design photos will be added here.</p>
+        </div>
+
+        <div class="proj-desc">
+            <h3>Final Tool and Program</h3>
+            <p>Add photos of the finished tool from several angles and describe how it grips, turns, and holds the nut. The SPIKE Prime program and notes explaining each part can be added here.</p>
+            <p>The program uses the color sensor to run motor A in different directions for green and magenta, while the hub buttons turn motor C by 30 degrees.</p>
+        </div>
+
+        <div class="proj-gallery">
+            <p>Photos of the finished tool will be added here.</p>
+        </div>
+
+        <div class="proj-code">
+            <h3>SPIKE Prime Code</h3>
+            <pre><code># Setup: color sensor on port B, motor A for color reactions, and motor C for button turns.
+from hub import port, button
+import runloop
+import motor
+import color
+import color_sensor
+
+# Set the speeds for the two directions.
+COUNTERCLOCKWISE_SPEED = -300
+CLOCKWISE_SPEED = 300
+
+async def main():
+    # Keep checking the sensor and buttons while the program runs.
+    while True:
+        # Run motor A counterclockwise when the sensor sees green.
+        if color_sensor.color(port.B) == color.GREEN:
+            motor.run(port.A, COUNTERCLOCKWISE_SPEED)
+
+        # Run motor A clockwise when the sensor sees pink (magenta).
+        elif color_sensor.color(port.B) == color.MAGENTA:
+            motor.run(port.A, CLOCKWISE_SPEED)
+
+        # Stop motor A when neither color is detected.
+        else:
+            motor.stop(port.A)
+
+        # Turn motor C counterclockwise 30 degrees when the left button is pressed.
+        if button.pressed(button.LEFT) &gt; 0:
+            await motor.run_for_degrees(port.C, 30, COUNTERCLOCKWISE_SPEED)
+
+            # Wait for release so holding the button does not repeat the turn.
+            while button.pressed(button.LEFT) &gt; 0:
+                await runloop.sleep_ms(20)
+
+        # Turn motor C clockwise 30 degrees when the right button is pressed.
+        elif button.pressed(button.RIGHT) &gt; 0:
+            await motor.run_for_degrees(port.C, 30, CLOCKWISE_SPEED)
+
+            # Wait for release so holding the button does not repeat the turn.
+            while button.pressed(button.RIGHT) &gt; 0:
+                await runloop.sleep_ms(20)
+
+        # Pause briefly before checking again.
+        await runloop.sleep_ms(20)
+
+# Start the program.
+runloop.run(main())</code></pre>
+        </div>
+
+        <div class="proj-desc">
+            <h3>Test Videos</h3>
+            <p>Add short clips showing the five test conditions: right hand, left hand, board upright, board upside down, and board horizontal.</p>
+        </div>
+
+        <div class="proj-video-container"></div>
+
+        <div class="proj-desc">
+            <h3>Results and Reflection</h3>
+            <p>Add the best run time and bracket result. Reflect on how the gloves and one-hand requirement shaped the design, and what you would change for a real astronaut.</p>
+        </div>
+
+    </div>
+    <!-- End Project Information -->
+
+</body>
+</html>
