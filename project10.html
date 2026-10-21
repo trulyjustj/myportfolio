@@ -20,7 +20,7 @@
         <h2 class="proj-header">Project 09: Robotic Arm</h2>
 
         <div class="proj-img-container">
-            <img src="./images/project10.png" alt="Robotic arm challenge brief describing the ping pong ball task and its constraints">
+            <img src="./images/robotarmangle.png" alt="Robotic arm with a pink ball at the pickup point and a stack of blue weights">
         </div>
 
         <div class="proj-desc">
@@ -35,6 +35,69 @@
                 <li>Move to the end location and place the ball on the end base.</li>
                 <li>Return to the initial position and wait for another ball trigger.</li>
             </ul>
+        </div>
+
+        <div class="proj-gallery project-gallery-large">
+            <img src="./images/robotarmfrontangle.png" alt="Front view of the robotic arm positioned between the pink ball and its destination">
+            <img src="./images/robotarmtop.png" alt="Top view of the robotic arm, track, and ball positions">
+        </div>
+
+        <div class="proj-desc">
+            <p>I chose to make a claw attached to an arm that grips the ball. The arm rotates 180 degrees to move it to the drop-off location. I made the arm start and end away from that location so it would not interrupt other arms when connected in series.</p>
+        </div>
+
+        <div class="proj-video-container">
+            <iframe src="https://www.youtube.com/embed/IE3bLGlVXMU" title="Robotic arm project demonstration" allowfullscreen></iframe>
+        </div>
+
+        <div class="proj-desc">
+            <p>The code waits for the color sensor to detect a color, then moves motors F and B through a timed sequence to operate the arm and claw. It waits for the sensor to clear before checking for another trigger.</p>
+        </div>
+
+        <div class="proj-code">
+            <h3>Robotic Arm Code</h3>
+            <pre><code># Setup: Color Sensor on port D; motors on ports B and F.
+from hub import port
+import runloop
+import motor
+import color
+import color_sensor
+
+async def main():
+    # Keep checking for a recognized color.
+    while True:
+        if color_sensor.color(port.D) != color.UNKNOWN:
+            # Wait 1 second, then turn motor F backward by 90 degrees.
+            await runloop.sleep_ms(3000)
+            await motor.run_for_degrees(port.F, -100, 360)
+
+            # Wait 1 second, then turn motor B backward by 180 degrees at half speed.
+            await runloop.sleep_ms(1000)
+            await motor.run_for_degrees(port.B, -180, 180)
+
+            # Wait 1 second, then turn motor F forward by 205 degrees.
+            await runloop.sleep_ms(1000)
+            await motor.run_for_degrees(port.F, 205, 360)
+
+            # Keep the existing 2-second wait before returning motor B.
+            await runloop.sleep_ms(2000)
+
+            # Wait 1 second, then return motor B by 180 degrees at half speed.
+            await runloop.sleep_ms(1000)
+            await motor.run_for_degrees(port.B, 180, 180)
+
+            # Wait 1 second, then finish by turning motor F backward by 90 degrees.
+            await runloop.sleep_ms(1000)
+            await motor.run_for_degrees(port.F, -100, 360)
+
+            # Wait until the sensor no longer detects a color.
+            while color_sensor.color(port.D) != color.UNKNOWN:
+                await runloop.sleep_ms(50)
+
+        # Pause briefly before checking the sensor again.
+        await runloop.sleep_ms(50)
+
+runloop.run(main())</code></pre>
         </div>
 
     </div>
