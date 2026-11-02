@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Project 10: Haunted House</title>
+    <link rel="stylesheet" href="./project.css">
+</head>
+<body>
+
+    <header class="header">
+        <a class="name">J CRUZ</a>
+        <nav class="navbar">
+            <a href="./index.html" class="active">Home</a>
+        </nav>
+    </header>
+
+    <div class="proj-container">
+
+        <h1 class="proj-header">Project Portfolio</h1>
+
+        <h2 class="proj-header">Project 10: Haunted House</h2>
+
+        <div class="proj-img-container">
+            <img src="./images/hhv2.png" alt="Interactive haunted-house mechanism built from LEGO SPIKE pieces">
+        </div>
+
+        <div class="proj-desc">
+            <h3>Project Overview</h3>
+            <p>This group project was created with Aubrey Silva and Jaden Uk. We built an interactive haunted-house feature: when someone reaches into a cauldron filled with candy, a spider drops from the ceiling.</p>
+
+            <h3>How It Works</h3>
+            <p>The project uses two hubs communicating with each other. One hub is mounted at the cauldron and connected to a distance sensor. When the sensor detects a change in distance as someone moves a hand toward the candy, that hub sends a signal to the second hub.</p>
+            <p>The second hub controls the mechanism above the spider. It rotates a platform geared for torque so it can support the spider's weight. When the platform rotates away, the spider drops from the ceiling. To reset the effect, motors drive a pulley that reels the spider back up, then the platform is raised so the spider rests on it.</p>
+
+            <h3>Managing the String</h3>
+            <p>As the platform is lowered again, a stick slowly pulls the string to keep it under tension. This helps the string unwind smoothly and prevents the wind-up mechanism from getting stuck. When the spider hangs freely, gravity keeps tension on the string; resting it on the platform removes that tension, which can make the string harder to wind back up reliably.</p>
+        </div>
+
+        <div class="proj-desc">
+            <h3>Iteration 1</h3>
+            <p>The first iteration was a collection of ideas put together without a clear plan. It was not structurally sound, and the mechanism was messy. We decided to redesign it to address these issues and create a more refined project.</p>
+        </div>
+
+        <div class="proj-gallery project-gallery-large">
+            <img src="./images/hhv1.png" alt="First haunted-house design iteration, viewed from above">
+            <img src="./images/hhv1 two.png" alt="Close view of the first haunted-house mechanism">
+        </div>
+
+        <div class="proj-desc">
+            <h3>Iteration 2</h3>
+            <p>For the second iteration, we planned the design before building. The result was more organized and structurally sound than our first attempt.</p>
+        </div>
+
+        <div class="proj-gallery project-gallery-large">
+            <img src="./images/hhv2.png" alt="Second haunted-house design iteration with an upright LEGO SPIKE mechanism">
+            <img src="./images/hhv2 two.png" alt="Haunted-house mechanism positioned beside a cauldron with a spider hanging below">
+            <img src="./images/hhv2 three.png" alt="Close view of the second iteration's LEGO mechanism">
+            <img src="./images/hhv2 four.png" alt="Front view of the second iteration's LEGO mechanism">
+        </div>
+
+        <div class="proj-desc">
+            <h3>Haunted House Presentation</h3>
+        </div>
+
+        <div class="proj-video-container">
+            <iframe src="https://www.youtube.com/embed/17TpVV5rCDA" title="Haunted House presentation" allowfullscreen></iframe>
+        </div>
+
+        <div class="proj-desc">
+            <h3>Code</h3>
+            <p>Hub A continuously reads the distance sensor and sends valid measurements to Hub B over a Beacon channel. Hub B waits until an object is 20 cm away or closer, then controls the platform and string motors to run the spider-drop and reset sequence. It waits for the object to move away before starting another cycle.</p>
+        </div>
+
+        <div class="proj-code">
+            <h3>HUB A</h3>
+            <pre><code># Hub A setup:
+# Distance Sensor on port C; Hub B listens on Beacon channel "!D".
+
+from spikecomm import Beacon
+from hub import port, light_matrix
+import distance_sensor
+import runloop
+
+
+# Set the port where the Distance Sensor is connected.
+SENSOR_PORT = port.C
+
+
+async def main():
+    # Create the Beacon used to send distance readings to Hub B.
+    beacon = Beacon("!D")
+
+    # Keep checking the distance sensor and sending its status.
+    while True:
+        millimeters = distance_sensor.distance(SENSOR_PORT)
+
+        # Send a distance in centimeters when a valid reading is available.
+        if millimeters &gt;= 0:
+            centimeters = round(millimeters / 10)
+            beacon.broadcast(centimeters)
+
+            # Calculate how many rows to light for this distance.
+            rows_to_light = max(0, 5 - centimeters // 25)
+            pixels = []
+
+            # Build the display from top row to bottom row.
+            for row in range(5):
+                if row &gt;= 5 - rows_to_light:
+                    pixels += [100] * 5
+                elif row == 4:
+                    pixels += [20] * 5
+                else:
+                    pixels += [0] * 5
+
+            # Show the distance bar.
+            light_matrix.show(pixels)
+        else:
+            # Send -1 to tell Hub B that no valid object distance was detected.
+            beacon.broadcast(-1)
+
+            # Clear the display when the sensor has no valid reading.
+            light_matrix.clear()
+
+        # Check again after a short pause.
+        await runloop.sleep_ms(100)
+
+
+# Start the SPIKE program.
+runloop.run(main())</code></pre>
+        </div>
+
+        <div class="proj-code">
+            <h3>HUB B</h3>
+            <pre><code># Hub B setup:
+# String motors: ports A and E
+# Platform motor: port B
+# Segment motor: port F
+# Hub A sends distances in centimeters; -1 means no valid reading.
+
+from spikecomm import Scanner
+from hub import port
+import runloop
+import motor
+import motor_pair
+
+
+# Start a cycle when an object is 20 cm away or closer.
+TRIGGER_DISTANCE_CM = 20
+
+# Motor speed is in degrees per second.
+SPEED = 600
+
+# Run the string motors for nine seconds.
+STRING_RUN_TIME_MS = 7000
+
+# Set the speed and estimated distance for the string motors' return.
+STRING_UNWIND_SPEED = SPEED // 2
+STRING_UNWIND_DEGREES = SPEED * STRING_RUN_TIME_MS // 1000
+
+# Divide F's 200-degree movement into five equal segments.
+F_SEGMENT_DEGREES = 40
+F_SEGMENT_COUNT = 5
+F_RETURN_DEGREES = 200
+
+# Wait two seconds between F segments, in milliseconds.
+F_SEGMENT_PAUSE_MS = 2000
+
+# The platform motor moves 100 degrees each way.
+PLATFORM_MOVE_DEGREES = 100
+
+
+# Store the most recently received distance.
+latest_distance = {"cm": None}
+
+
+# Save a distance value received from Hub A.
+def on_distance(values):
+    if len(values) == 1:
+        latest_distance["cm"] = values[0]
+
+
+# Listen for Hub A's distance messages.
+scanner = Scanner("!D")
+scanner.listen(on_distance)
+
+
+async def main():
+    # Remove a leftover pairing from an earlier run, if one exists.
+    motor_pair.unpair(motor_pair.PAIR_1)
+
+    # Pair A and E so they run together as the string motors.
+    motor_pair.pair(motor_pair.PAIR_1, port.A, port.E)
+
+    # Hold the platform at its starting position.
+    platform_start_position = motor.absolute_position(port.B)
+    await motor.run_to_absolute_position(
+        port.B,
+        platform_start_position,
+        SPEED,
+        stop=motor.HOLD
+    )
+
+    # Repeat the cycle when a new close-object detection occurs.
+    while True:
+        # Wait for a valid reading of 20 cm or closer.
+        while True:
+            distance_cm = latest_distance["cm"]
+
+            # Start only when Hub A reports a close object.
+            if distance_cm is not None and 0 &lt;= distance_cm &lt;= TRIGGER_DISTANCE_CM:
+                break
+
+            # Pause briefly before checking for another reading.
+            await runloop.sleep_ms(50)
+
+        # Drop the platform by 100 degrees and hold it in place.
+        await motor.run_for_degrees(
+            port.B,
+            -PLATFORM_MOVE_DEGREES,
+            SPEED,
+            stop=motor.HOLD
+        )
+
+        # Wait five seconds before operating the string motors.
+        await runloop.sleep_ms(5000)
+
+        # Wind the string with A and E for nine seconds.
+        await motor_pair.move_for_time(
+            motor_pair.PAIR_1,
+            STRING_RUN_TIME_MS,
+            0,
+            velocity=-SPEED
+        )
+
+        # Raise the platform by 100 degrees and hold it in position.
+        await motor.run_for_degrees(
+            port.B,
+            PLATFORM_MOVE_DEGREES,
+            SPEED,
+            stop=motor.HOLD
+        )
+
+        # Start A and E unwinding while F moves through its segments.
+        motor_pair.move_for_degrees(
+            motor_pair.PAIR_1,
+            STRING_UNWIND_DEGREES,
+            0,
+            velocity=STRING_UNWIND_SPEED
+        )
+
+        # Move F through five equal 40-degree segments.
+        for segment_number in range(F_SEGMENT_COUNT):
+            await motor.run_for_degrees(port.F, -F_SEGMENT_DEGREES, SPEED)
+
+            # Pause between segments, but not after the final segment.
+            if segment_number &lt; F_SEGMENT_COUNT - 1:
+                await runloop.sleep_ms(F_SEGMENT_PAUSE_MS)
+
+        # Return F 200 degrees to its starting position.
+        await motor.run_for_degrees(port.F, F_RETURN_DEGREES, SPEED)
+
+        # Stop A and E as soon as F finishes returning.
+        motor_pair.stop(motor_pair.PAIR_1)
+
+        # Keep the raised platform held in position.
+        await motor.run_to_absolute_position(
+            port.B,
+            motor.absolute_position(port.B),
+            SPEED,
+            stop=motor.HOLD
+        )
+
+        # Wait until the object is farther than 20 cm away or nothing is detected.
+        while True:
+            distance_cm = latest_distance["cm"]
+
+            # Either condition clears the previous close-object detection.
+            if distance_cm == -1 or (
+                distance_cm is not None
+                and distance_cm &gt; TRIGGER_DISTANCE_CM
+            ):
+                break
+
+            # Pause briefly before checking for another reading.
+            await runloop.sleep_ms(50)
+
+
+# Start the SPIKE program.
+runloop.run(main())</code></pre>
+        </div>
+
+    </div>
+
+</body>
+</html>
